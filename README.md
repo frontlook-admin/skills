@@ -44,11 +44,12 @@ Each skill is a self-contained knowledge package with a `SKILL.md` file. **Copy 
 
 | Skill | Location | Description |
 |-------|----------|-------------|
+| `azd-deployment` | `.github/skills/azd-deployment/` | Azure Developer CLI deployment to Container Apps with Bicep |
 | `azure-ai-search-python` | `.github/skills/azure-ai-search-python/` | Azure AI Search SDK patterns, vector/hybrid search, agentic retrieval |
 | `azure-ai-voicelive-skill` | `.github/skills/azure-ai-voicelive-skill/` | Azure AI Voice Live SDK integration |
 | `cosmos-db-python-skill` | `.github/skills/cosmos-db-python-skill/` | Cosmos DB NoSQL with Python/FastAPI, CRUD patterns |
 | `fastapi-router` | `.github/skills/fastapi-router/` | FastAPI routers with CRUD, auth, and response models |
-| `foundry-iq-agent` | `.github/skills/foundry-iq-agent/` | Foundry agents with IQ knowledge bases |
+| `foundry-iq-python` | `.github/skills/foundry-iq-python/` | Agentic retrieval with knowledge bases and Foundry Agent Service |
 | `foundry-nextgen-frontend` | `.github/skills/foundry-nextgen-frontend/` | NextGen Design System UI patterns (Vite + React) |
 | `issue-creator` | `.github/skills/issue-creator/` | GitHub issue creation patterns |
 | `mcp-builder` | `.github/skills/mcp-builder/` | Building MCP servers (Python/Node) |
