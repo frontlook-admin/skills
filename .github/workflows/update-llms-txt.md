@@ -1,6 +1,6 @@
 ---
 on:
-  schedule: weekly
+  schedule: "0 3 * * *"  # 7 PM PST (3 AM UTC) daily
   workflow_dispatch:
 permissions:
   contents: read

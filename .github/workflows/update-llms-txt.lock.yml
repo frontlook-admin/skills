@@ -23,8 +23,7 @@
 name: "Update Foundry llms.txt Documentation"
 "on":
   schedule:
-  - cron: "26 11 * * 3"
-    # Friendly format: weekly (scattered)
+  - cron: "0 3 * * *"
   workflow_dispatch:
 
 permissions:
