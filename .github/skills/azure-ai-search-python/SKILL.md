@@ -7,9 +7,24 @@ description: Clean code patterns for Azure AI Search Python SDK (azure-search-do
 
 Write clean, idiomatic Python code for Azure AI Search using `azure-search-documents`.
 
-## Authentication Patterns
+## Installation
 
-**Microsoft Entra ID (preferred)**:
+```bash
+pip install azure-search-documents azure-identity
+```
+
+## Environment Variables
+
+```bash
+AZURE_SEARCH_ENDPOINT=https://<search-service>.search.windows.net
+AZURE_SEARCH_INDEX_NAME=<index-name>
+# For API key auth (not recommended for production)
+AZURE_SEARCH_API_KEY=<api-key>
+```
+
+## Authentication
+
+**DefaultAzureCredential (preferred)**:
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient

@@ -7,6 +7,46 @@ description: Build Azure Cosmos DB NoSQL services with Python/FastAPI following 
 
 Build production-grade Azure Cosmos DB NoSQL services following clean code, security best practices, and TDD principles.
 
+## Installation
+
+```bash
+pip install azure-cosmos azure-identity
+```
+
+## Environment Variables
+
+```bash
+COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/
+COSMOS_DATABASE_NAME=<database-name>
+COSMOS_CONTAINER_ID=<container-id>
+# For emulator only (not production)
+COSMOS_KEY=<emulator-key>
+```
+
+## Authentication
+
+**DefaultAzureCredential (preferred)**:
+```python
+from azure.cosmos import CosmosClient
+from azure.identity import DefaultAzureCredential
+
+client = CosmosClient(
+    url=os.environ["COSMOS_ENDPOINT"],
+    credential=DefaultAzureCredential()
+)
+```
+
+**Emulator (local development)**:
+```python
+from azure.cosmos import CosmosClient
+
+client = CosmosClient(
+    url="https://localhost:8081",
+    credential=os.environ["COSMOS_KEY"],
+    connection_verify=False
+)
+```
+
 ## Architecture Overview
 
 ```

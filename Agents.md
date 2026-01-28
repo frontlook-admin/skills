@@ -156,7 +156,7 @@ Skills are domain-specific knowledge packages in `.github/skills/`. Each has a `
 |-------|---------|
 | `azure-ai-search-python` | Search SDK patterns, vector/hybrid search, agentic retrieval |
 | `azure-ai-agents-python` | Low-level agents SDK for CRUD, threads, streaming, tools |
-| `azure-ai-voicelive-skill` | Real-time voice AI with Azure AI Voice Live SDK |
+| `azure-ai-voicelive` | Real-time voice AI with Azure AI Voice Live SDK |
 | `foundry-sdk-python` | High-level Foundry project client, versioned agents, evals |
 | `foundry-iq-python` | Agentic retrieval with knowledge bases |
 | `foundry-nextgen-frontend` | NextGen Design System UI patterns (Vite + React) |
@@ -170,7 +170,7 @@ Skills are domain-specific knowledge packages in `.github/skills/`. Each has a `
 | `react-flow-node` | React Flow custom nodes with TypeScript |
 | `podcast-generation` | Podcast generation workflows |
 | `skill-creator` | Guide for creating new skills |
-| `issue-creator` | GitHub issue creation patterns |
+| `github-issue-creator` | Convert raw notes/logs into structured GitHub issues |
 
 ### Skill Selection
 

@@ -234,322 +234,55 @@ const hoverScale = {
 </motion.div>
 ```
 
-## Card Component (Correct Implementation)
+## Components Quick Reference
 
-**Cards should have NO visible borders or very subtle ones.**
+For full component implementations with JSX and CSS, see [references/components.md](references/components.md).
+
+| Component | Key Rule |
+|-----------|----------|
+| Card | NO visible borders, subtle shadow, hover scale 1.01 |
+| Button | Primary = purple, Secondary = transparent with border |
+| Badge | Status colors only (success, warning, error, info) |
+| Tag | Neutral grey background, uppercase, 11px |
+| Grid | 16px gap, 32px page padding |
+
+## Layout Structure
 
 ```jsx
-import { motion } from 'framer-motion';
-
-function Card({ title, description, status, tags, meta }) {
-  return (
-    <motion.div 
-      className="card"
-      whileHover={{ 
-        scale: 1.01,
-        backgroundColor: 'rgba(255, 255, 255, 0.02)'
-      }}
-      transition={{ duration: 0.15 }}
-    >
-      <div className="card-header">
-        <h3 className="card-title">{title}</h3>
-        {status && <StatusBadge status={status} />}
-      </div>
-      
-      <p className="card-description">{description}</p>
-      
-      {tags && (
-        <div className="card-tags">
-          {tags.map(tag => (
-            <span key={tag} className="tag">{tag}</span>
-          ))}
-        </div>
-      )}
-      
-      {meta && (
-        <div className="card-meta">
-          {meta}
-        </div>
-      )}
+// Standard app layout
+<div className="app-layout">
+  <Sidebar />           {/* 56px width, bg-sidebar */}
+  <main className="main-content">
+    <TopBar />          {/* 48px height */}
+    <motion.div className="page-content" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+      {children}
     </motion.div>
-  );
-}
+  </main>
+</div>
 ```
 
-```css
-.card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);  /* 20px */
-  /* NO border or very subtle */
-  border: 1px solid transparent;
-  /* Use subtle shadow instead of border */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
+For detailed layout patterns, see [references/patterns.md](references/patterns.md).
 
-.card:hover {
-  /* Subtle border on hover only */
-  border-color: var(--border-subtle);
-}
+## Critical Rules
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-3);  /* 12px */
-}
+**Don'ts ❌**
+- Visible card borders (blend into background)
+- Inconsistent padding (use spacing scale)
+- Skip animations (every list, modal, page needs motion)
+- Purple for cards/backgrounds (neutral greys only)
+- Skip hover states (everything interactive needs feedback)
 
-.card-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.card-description {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-4);  /* 16px bottom */
-  line-height: 1.5;
-}
-
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);  /* 8px */
-  margin-bottom: var(--space-4);
-}
-
-.card-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  font-size: 12px;
-  color: var(--text-muted);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border-subtle);
-}
-```
-
-## Tags & Badges
-
-```css
-/* Service/integration tags - subtle, not colorful */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-}
-
-/* Status badges */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  border-radius: var(--radius-sm);
-}
-
-.badge-success {
-  background: var(--success-bg);
-  color: var(--success);
-}
-
-.badge-info {
-  background: var(--info-bg);
-  color: var(--info);
-}
-
-.badge-warning {
-  background: var(--warning-bg);
-  color: var(--warning);
-}
-```
-
-## Card Grid Layout
-
-```css
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: var(--space-4);  /* 16px - consistent gap */
-  padding: var(--space-8);  /* 32px page padding */
-}
-
-/* For fixed 4-column layout */
-.card-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
-}
-
-/* For 3-column layout */
-.card-grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-}
-```
-
-## Page Layout with Sidebar
-
-```jsx
-function AppLayout({ children }) {
-  return (
-    <div className="app-layout">
-      <Sidebar />
-      <main className="main-content">
-        <TopBar />
-        <motion.div 
-          className="page-content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          {children}
-        </motion.div>
-      </main>
-    </div>
-  );
-}
-```
-
-```css
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-  background: var(--bg-page);
-}
-
-.sidebar {
-  width: 56px;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border-subtle);
-  flex-shrink: 0;
-}
-
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.topbar {
-  height: 48px;
-  background: var(--bg-sidebar);
-  border-bottom: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-6);
-}
-
-.page-content {
-  flex: 1;
-  padding: var(--space-8);  /* 32px consistent padding */
-  overflow-y: auto;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-6);  /* 24px before content */
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-```
-
-## Buttons
-
-```jsx
-<motion.button
-  className="btn btn-primary"
-  whileHover={{ scale: 1.02 }}
-  whileTap={{ scale: 0.98 }}
->
-  Create
-</motion.button>
-
-<motion.button
-  className="btn btn-secondary"
-  whileHover={{ scale: 1.02 }}
-  whileTap={{ scale: 0.98 }}
->
-  Cancel
-</motion.button>
-```
-
-```css
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.btn-primary {
-  background: var(--brand-primary);
-  color: white;
-  border: none;
-}
-
-.btn-primary:hover {
-  background: var(--brand-hover);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--border-strong);
-}
-
-.btn-secondary:hover {
-  background: var(--bg-hover);
-}
-```
-
-## Critical Don'ts ❌
-
-- **Don't use visible card borders** - cards blend into background
-- **Don't use inconsistent padding** - follow the spacing scale
-- **Don't forget animations** - every list, modal, page needs motion
-- **Don't use purple for cards/backgrounds** - neutral greys only
-- **Don't skip hover states** - everything interactive needs feedback
-- **Don't use hard-coded pixel values** - use CSS variables
-
-## Critical Do's ✅
-
+**Do's ✅**
 - Use Framer Motion for all animations
-- Use consistent spacing scale (4, 8, 12, 16, 20, 24, 32px)
-- Use 32px padding for page content areas
-- Use 16px gap for card grids
-- Use transparent or very subtle borders
-- Add hover animations to interactive elements
+- Use spacing scale: 4, 8, 12, 16, 20, 24, 32px
+- 32px page padding, 16px card grid gap
+- Transparent or very subtle borders
 - Stagger list/grid item animations
 
-## File References
+## References
 
-- **Design Tokens**: See `references/design-tokens.md`
-- **Components**: See `references/components.md`
-- **Patterns**: See `references/patterns.md`
+| File | Contents |
+|------|----------|
+| [references/design-tokens.md](references/design-tokens.md) | Full CSS variables, colors, spacing |
+| [references/components.md](references/components.md) | Card, Button, Badge, Tag, Input implementations |
+| [references/patterns.md](references/patterns.md) | Layout, Grid, Modal, Table patterns |
