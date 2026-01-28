@@ -1,4 +1,3 @@
-````skill
 ---
 name: foundry-iq-python
 description: Build agentic retrieval solutions with Azure AI Search knowledge bases and Foundry Agent Service using the Python SDK. Use when creating knowledge sources/bases, connecting agents via MCP for RAG, implementing hybrid search with semantic reranking, or building conversational apps with citation support. Covers SearchIndexClient, KnowledgeBaseRetrievalClient, and AIProjectClient.
@@ -8,20 +7,19 @@ description: Build agentic retrieval solutions with Azure AI Search knowledge ba
 
 Build agentic retrieval pipelines using Azure AI Search knowledge bases with the Python SDK.
 
-## Architecture
-
-```
-User Query → Foundry Agent → MCP Tool → Knowledge Base → Knowledge Sources
-                                              ↓
-                              Query Planning + Hybrid Search + Reranking
-                                              ↓
-                              Extractive Data with Citations
-```
-
 ## Installation
 
 ```bash
 pip install azure-ai-projects==2.0.0b1 azure-search-documents==11.7.0b2 azure-identity
+```
+
+## Environment Variables
+
+```bash
+AZURE_SEARCH_ENDPOINT=https://<search-service>.search.windows.net
+AZURE_OPENAI_ENDPOINT=https://<openai-resource>.openai.azure.com
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-large
+AZURE_AI_PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
 ```
 
 ## Authentication
@@ -32,6 +30,16 @@ from azure.search.documents.indexes import SearchIndexClient
 
 credential = DefaultAzureCredential()
 index_client = SearchIndexClient(endpoint=search_endpoint, credential=credential)
+```
+
+## Architecture
+
+```
+User Query → Foundry Agent → MCP Tool → Knowledge Base → Knowledge Sources
+                                              ↓
+                              Query Planning + Hybrid Search + Reranking
+                                              ↓
+                              Extractive Data with Citations
 ```
 
 ## Core Workflow
@@ -274,5 +282,3 @@ gpt-4o, gpt-4o-mini, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-5, gpt-5-mini, gpt
 - [references/patterns.md](references/patterns.md): Complete SDK patterns for all operations
 - [references/knowledge-sources.md](references/knowledge-sources.md): Knowledge source configurations
 - [scripts/create_agent.py](scripts/create_agent.py): End-to-end script
-
-````
