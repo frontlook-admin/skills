@@ -1,6 +1,6 @@
 # Agent Skills
 
-Skills, prompts, and MCP configurations for AI coding agents working with Azure SDKs and Microsoft AI Foundry.
+Skills, custom agents, AGENTS.md templates, and MCP configurations for AI coding agents working with Azure SDKs and Microsoft AI Foundry.
 
 > **Blog post:** [Context-Driven Development: Agent Skills for Microsoft Foundry and Azure](https://devblogs.microsoft.com/all-things-azure/context-driven-development-agent-skills-for-microsoft-foundry-and-azure/)
 
@@ -485,12 +485,53 @@ Role-specific agent personas in [`.github/agents/`](.github/agents/):
 | `infrastructure.agent.md` | Bicep, Azure CLI, Container Apps, networking |
 | `planner.agent.md` | Task decomposition, architecture decisions |
 | `presenter.agent.md` | Documentation, demos, technical writing |
+| `scaffolder.agent.md` | Full-stack Azure AI Foundry app scaffolding |
 
 Use [`AGENTS.md`](AGENTS.md) as a template for configuring agent behavior in your own projects.
 
 ### Prompts
 
-Reusable prompt templates in [`.github/prompts/`](.github/prompts/) for code reviews, component creation, and common workflows.
+Reusable prompt templates in [`.github/prompts/`](.github/prompts/):
+
+| Prompt | Purpose |
+|--------|---------|
+| [`scaffold-foundry-app.prompt.md`](.github/prompts/scaffold-foundry-app.prompt.md) | **Full-stack Azure AI Foundry app scaffolder** — Vite + React + Fluent UI dark theme frontend, FastAPI + Pydantic backend, azd + Bicep infrastructure for Container Apps with remote builds |
+| [`code-review.prompt.md`](.github/prompts/code-review.prompt.md) | Structured code review with security, performance, and maintainability checks |
+| [`create-store.prompt.md`](.github/prompts/create-store.prompt.md) | Zustand store creation with TypeScript and subscribeWithSelector |
+| [`create-node.prompt.md`](.github/prompts/create-node.prompt.md) | React Flow custom node creation with handles and Zustand integration |
+| [`add-endpoint.prompt.md`](.github/prompts/add-endpoint.prompt.md) | FastAPI endpoint creation with Pydantic models and proper typing |
+
+#### Project Scaffolder
+
+The **scaffold-foundry-app** prompt + **scaffolder** agent provide a complete project scaffolding system for Azure AI Foundry applications:
+
+**Frontend Stack:**
+- Vite + React 18 + TypeScript (strict mode)
+- Fluent UI v9 with dark theme
+- Framer Motion for animations
+- Tailwind CSS (JIT) for utility styles
+- pnpm package manager
+
+**Backend Stack:**
+- FastAPI with async patterns
+- Pydantic v2 for validation
+- pytest + pytest-asyncio for testing
+- Ruff for linting/formatting
+- uv for dependency management
+
+**Infrastructure:**
+- Azure Developer CLI (azd) with `remoteBuild: true`
+- Bicep templates for Azure Container Apps
+- Managed Identity for secure authentication
+- Azure Container Registry for images
+
+```bash
+# Use with GitHub Copilot Chat
+@workspace /scaffold-foundry-app Create a chat application with Azure OpenAI
+
+# Or invoke the scaffolder agent directly
+@scaffolder Build a document analysis app with Foundry agents
+```
 
 ### Live Documentation
 
@@ -509,17 +550,18 @@ These files follow the [llms.txt specification](https://llmstxt.org/) for LLM-fr
 The test harness validates that skills produce correct code patterns. It evaluates generated code against acceptance criteria defined for each skill.
 
 ```bash
-# Install test dependencies
-pip install -r tests/requirements.txt
+# Install test dependencies (from tests directory)
+cd tests
+uv sync
 
 # List skills with test coverage
-python3 -m tests.harness.runner --list
+uv run python -m tests.harness.runner --list
 
 # Run tests for a specific skill (mock mode for CI)
-python3 -m tests.harness.runner azure-ai-projects-py --mock --verbose
+uv run python -m tests.harness.runner azure-ai-projects-py --mock --verbose
 
 # Run all pytest tests
-python3 -m pytest tests/test_skills.py -v
+uv run pytest tests/test_skills.py -v
 ```
 
 ### Adding Test Coverage

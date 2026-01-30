@@ -14,20 +14,22 @@ This harness:
 ## Quick Start
 
 ```bash
-# Install dependencies
-pip install -r tests/requirements.txt
+# Install dependencies (from tests directory)
+cd tests
+uv sync
+cd ..
 
 # List available skills with acceptance criteria
-python -m tests.harness.runner --list
+uv run --project tests python -m tests.harness.runner --list
 
 # Run evaluation in mock mode (no Copilot SDK required)
-python -m tests.harness.runner azure-ai-agents-py --mock --verbose
+uv run --project tests python -m tests.harness.runner azure-ai-agents-py --mock --verbose
 
 # Run with pytest
-pytest tests/ -v
+uv run --project tests pytest tests/ -v
 
 # Run specific skill tests
-pytest tests/test_skills.py -k "azure_ai_agents" -v
+uv run --project tests pytest tests/test_skills.py -k "azure_ai_agents" -v
 ```
 
 ## Architecture
@@ -51,7 +53,7 @@ tests/
 ├── fixtures/                 # Test fixtures (sample code, etc.)
 ├── reports/                  # Generated reports (gitignored)
 ├── conftest.py              # Pytest fixtures
-├── requirements.txt         # Test dependencies
+├── pyproject.toml           # Test dependencies (uv)
 ├── test_skills.py           # Main test file
 └── README.md                # This file
 ```
@@ -62,10 +64,10 @@ tests/
 
 ```bash
 # Basic usage
-python -m tests.harness.runner <skill-name>
+uv run python -m tests.harness.runner <skill-name>
 
 # Options
-python -m tests.harness.runner azure-ai-agents-py \
+uv run python -m tests.harness.runner azure-ai-agents-py \
     --mock                  # Use mock responses (no Copilot SDK)
     --verbose               # Show detailed output
     --filter basic          # Filter scenarios by name/tag
@@ -77,19 +79,19 @@ python -m tests.harness.runner azure-ai-agents-py \
 
 ```bash
 # Run all tests
-pytest tests/ -v
+uv run pytest tests/ -v
 
 # Run tests for a specific skill
-pytest tests/test_skills.py -k "azure_ai_agents" -v
+uv run pytest tests/test_skills.py -k "azure_ai_agents" -v
 
 # Run with coverage
-pytest tests/ --cov=tests.harness --cov-report=html
+uv run pytest tests/ --cov=tests.harness --cov-report=html
 
 # Skip slow tests
-pytest tests/ -m "not slow"
+uv run pytest tests/ -m "not slow"
 
 # Run in parallel
-pytest tests/ -n auto
+uv run pytest tests/ -n auto
 ```
 
 ### Programmatic Usage
@@ -194,13 +196,13 @@ scenarios:
 
 ```bash
 # Verify criteria loads correctly
-python -m tests.harness.criteria_loader <skill-name>
+uv run python -m tests.harness.criteria_loader <skill-name>
 
 # Run evaluation
-python -m tests.harness.runner <skill-name> --mock --verbose
+uv run python -m tests.harness.runner <skill-name> --mock --verbose
 
 # Run pytest
-pytest tests/test_skills.py -k "<skill_name>" -v
+uv run pytest tests/test_skills.py -k "<skill_name>" -v
 ```
 
 ## Evaluation Scoring
@@ -227,23 +229,23 @@ A result **passes** if it has no error-severity findings.
 
 ### Real Mode (Copilot SDK)
 - Generates code using GitHub Copilot SDK
-- Requires `pip install github-copilot-sdk`
+- Requires `uv add github-copilot-sdk` (or install in optional group)
 - Requires Copilot CLI authentication
 - Tests actual generation quality
 
 ```bash
 # Check if Copilot is available
-python -m tests.harness.copilot_client
+uv run python -m tests.harness.copilot_client
 
 # Run with real Copilot (if available)
-python -m tests.harness.runner azure-ai-agents-py
+uv run python -m tests.harness.runner azure-ai-agents-py
 ```
 
 ## Reports
 
 ### Console Output
 ```bash
-python -m tests.harness.runner azure-ai-agents-py --verbose
+uv run python -m tests.harness.runner azure-ai-agents-py --verbose
 ```
 
 ### Markdown Report
@@ -256,7 +258,7 @@ report_path = reporter.generate_report(summary)
 
 ### JSON Output
 ```bash
-python -m tests.harness.runner azure-ai-agents-py --output json > report.json
+uv run python -m tests.harness.runner azure-ai-agents-py --output json > report.json
 ```
 
 ## Key Classes
@@ -294,8 +296,7 @@ Orchestrates the full evaluation:
 - Check file path and naming
 
 ### "Copilot SDK not available"
-- Install: `pip install github-copilot-sdk`
-- Or use `--mock` flag
+- Install: `uv add github-copilot-sdk` (or use `--mock` flag)
 
 ### Tests pass in mock mode but fail with real Copilot
 - Mock responses are manually crafted to be correct

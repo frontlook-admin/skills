@@ -18,7 +18,7 @@ This folder contains a test harness for evaluating AI-generated code against acc
 | `azure-ai-agents-py` | ✅ Complete | ✅ Complete | Passing |
 | `azure-ai-projects-py` | ✅ Complete | ✅ Complete | Passing |
 
-Run `python -m tests.harness.runner --list` to see all skills with criteria.
+Run `uv run --project tests python -m tests.harness.runner --list` to see all skills with criteria.
 
 ---
 
@@ -92,17 +92,20 @@ scenarios:
 ### Step 3: Verify
 
 ```bash
+# Install dependencies (from tests directory)
+cd tests && uv sync && cd ..
+
 # Check skill is discovered
-python -m tests.harness.runner --list
+uv run --project tests python -m tests.harness.runner --list
 
 # Run in mock mode (fast, deterministic)
-python -m tests.harness.runner <skill-name> --mock --verbose
+uv run --project tests python -m tests.harness.runner <skill-name> --mock --verbose
 
 # Run specific scenario
-python -m tests.harness.runner <skill-name> --mock --filter scenario_name
+uv run --project tests python -m tests.harness.runner <skill-name> --mock --filter scenario_name
 
 # Run pytest
-pytest tests/test_skills.py -v
+uv run --project tests pytest tests/test_skills.py -v
 ```
 
 **Success criteria:**
@@ -120,7 +123,7 @@ tests/
 │   ├── criteria_loader.py    # Parses acceptance-criteria.md
 │   ├── evaluator.py          # Validates code against patterns
 │   ├── copilot_client.py     # Code generation (mock/real)
-│   ├── runner.py             # CLI: python -m tests.harness.runner
+│   ├── runner.py             # CLI: uv run --project tests python -m tests.harness.runner
 │   └── reporters/            # Output formatters
 │
 ├── scenarios/
@@ -129,6 +132,7 @@ tests/
 │   └── azure-ai-projects-py/
 │       └── scenarios.yaml    # 12 scenarios
 │
+├── pyproject.toml            # Dependencies (uv)
 ├── test_skills.py            # Pytest integration
 └── README.md                 # Detailed documentation
 ```
@@ -169,22 +173,22 @@ tests/
 
 ```bash
 # List available skills
-python -m tests.harness.runner --list
+uv run --project tests python -m tests.harness.runner --list
 
 # Run all scenarios for a skill (mock mode)
-python -m tests.harness.runner <skill> --mock --verbose
+uv run --project tests python -m tests.harness.runner <skill> --mock --verbose
 
 # Run filtered scenarios
-python -m tests.harness.runner <skill> --mock --filter <name-or-tag>
+uv run --project tests python -m tests.harness.runner <skill> --mock --filter <name-or-tag>
 
 # Run pytest (all tests)
-pytest tests/ -v
+uv run --project tests pytest tests/ -v
 
 # Run pytest (specific skill)
-pytest tests/test_skills.py -k "<skill_name>" -v
+uv run --project tests pytest tests/test_skills.py -k "<skill_name>" -v
 
 # Check if criteria loads correctly
-python -c "from tests.harness import AcceptanceCriteriaLoader; print(AcceptanceCriteriaLoader().load('<skill>'))"
+uv run --project tests python -c "from tests.harness import AcceptanceCriteriaLoader; print(AcceptanceCriteriaLoader().load('<skill>'))"
 ```
 
 ---
