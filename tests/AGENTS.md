@@ -9,7 +9,7 @@ This folder contains a test harness for evaluating AI-generated code against acc
 **How it works:**
 1. Each skill has **acceptance criteria** (correct/incorrect code patterns)
 2. Test **scenarios** prompt code generation and validate the output
-3. The harness runs scenarios and scores generated code against criteria
+3. The harness runs scenarios using the [GitHub Copilot SDK](https://github.com/github/copilot-sdk) and scores generated code against criteria
 
 ## Current State
 

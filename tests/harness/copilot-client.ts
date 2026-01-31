@@ -195,6 +195,7 @@ Generate only code. Follow the patterns from the skill documentation exactly.
     const fullPrompt = this.buildPrompt(prompt, skillContext);
 
     // Note: The real @github/copilot-sdk integration would go here
+    // See: https://github.com/github/copilot-sdk
     // For now, we throw an error since the SDK isn't widely available
     throw new Error(
       "Real Copilot SDK integration not implemented. Use --mock flag."
@@ -290,6 +291,7 @@ Generate only code. Follow the patterns from the skill documentation exactly.
  * Check if Copilot SDK is available.
  * Note: In the TypeScript version, we always default to mock mode
  * since the @github/copilot-sdk isn't widely available yet.
+ * See: https://github.com/github/copilot-sdk
  */
 export function checkCopilotAvailable(): boolean {
   // For now, always return false to use mock mode

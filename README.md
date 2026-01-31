@@ -1,6 +1,6 @@
 # Agent Skills
 
-[![Test Harness](https://github.com/microsoft/agent-skills/actions/workflows/test-harness.yml/badge.svg?branch=main)](https://github.com/microsoft/agent-skills/actions/workflows/test-harness.yml)
+[![Tests with Copilot SDK](https://github.com/microsoft/agent-skills/actions/workflows/test-harness.yml/badge.svg?branch=main)](https://github.com/github/copilot-sdk)
 [![Install via skills.sh](https://img.shields.io/badge/skills.sh-install-blue)](https://skills.sh/microsoft/agent-skills)
 [![Browse on Context7](https://img.shields.io/badge/Context7-browse%20skills-purple)](https://context7.com/microsoft/agent-skills?tab=skills)
 
@@ -569,7 +569,7 @@ These files follow the [llms.txt specification](https://llmstxt.org/) for LLM-fr
 
 ## Testing Skills
 
-The test harness validates that skills produce correct code patterns. It evaluates generated code against acceptance criteria defined for each skill.
+The test harness validates that skills produce correct code patterns using the [GitHub Copilot SDK](https://github.com/github/copilot-sdk). It evaluates generated code against acceptance criteria defined for each skill.
 
 ```bash
 # Install test dependencies (from tests directory)

@@ -12,12 +12,12 @@ pnpm test                                        # Run unit tests
 
 ## Overview
 
-A TypeScript test framework for evaluating AI-generated code against acceptance criteria defined in skill files.
+A TypeScript test framework for evaluating AI-generated code against acceptance criteria defined in skill files. Powered by the [GitHub Copilot SDK](https://github.com/github/copilot-sdk).
 
 **Workflow:**
 1. Load acceptance criteria from `.github/skills/<skill>/references/acceptance-criteria.md`
 2. Run test scenarios from `tests/scenarios/<skill>/scenarios.yaml`
-3. Generate code using GitHub Copilot SDK (or mock responses)
+3. Generate code using [GitHub Copilot SDK](https://github.com/github/copilot-sdk) (or mock responses)
 4. Evaluate code against correct/incorrect patterns
 5. Report results via console, markdown, or JSON
 
