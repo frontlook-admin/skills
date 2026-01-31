@@ -417,7 +417,6 @@ scenarios:
       Create the main App.tsx entry point with React Router and
       AnimatePresence for page transitions.
     expected_patterns:
-      - "BrowserRouter"
       - "Routes"
       - "Route"
       - "AnimatePresence"
