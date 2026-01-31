@@ -44,6 +44,7 @@ class AcceptanceCriteria:
     
     skill_name: str
     source_path: Path
+    language: str = "python"
     rules: list[ValidationRule] = field(default_factory=list)
     correct_patterns: list[CodePattern] = field(default_factory=list)
     incorrect_patterns: list[CodePattern] = field(default_factory=list)
@@ -129,9 +130,19 @@ class AcceptanceCriteriaLoader:
         content: str
     ) -> AcceptanceCriteria:
         """Parse markdown content into structured criteria."""
+        # Determine language from skill name suffix
+        language = "python"  # default
+        if skill_name.endswith("-java"):
+            language = "java"
+        elif skill_name.endswith("-dotnet"):
+            language = "csharp"
+        elif skill_name.endswith("-ts"):
+            language = "typescript"
+        
         criteria = AcceptanceCriteria(
             skill_name=skill_name,
             source_path=path,
+            language=language,
         )
         
         # Extract all code blocks with context

@@ -1,0 +1,161 @@
+# yaml-language-server: $schema=https://json.schemastore.org/any.json
+# Test scenarios for azure-messaging-webpubsub-java skill evaluation
+
+config:
+  model: gpt-4
+  max_tokens: 2000
+  temperature: 0.3
+
+scenarios:
+  - name: client_creation
+    prompt: |
+      Create Java code to set up the Azure Web PubSub service client
+      using a connection string from an environment variable.
+    expected_patterns:
+      - "WebPubSubServiceClientBuilder"
+      - "connectionString"
+      - "hub"
+      - "buildClient"
+      - 'System\.getenv\('
+    forbidden_patterns:
+      - 'connectionString\("Endpoint='
+    tags:
+      - basic
+      - authentication
+    mock_response: |
+      import com.azure.messaging.webpubsub.WebPubSubServiceClient;
+      import com.azure.messaging.webpubsub.WebPubSubServiceClientBuilder;
+
+      public class ClientSetup {
+          public static void main(String[] args) {
+              String connectionString = System.getenv("WEB_PUBSUB_CONNECTION_STRING");
+              
+              WebPubSubServiceClient client = new WebPubSubServiceClientBuilder()
+                  .connectionString(connectionString)
+                  .hub("chat")
+                  .buildClient();
+              
+              System.out.println("Client initialized successfully");
+          }
+      }
+
+  - name: send_to_all
+    prompt: |
+      Create a Java example that sends a message to all connected
+      clients using Azure Web PubSub.
+    expected_patterns:
+      - "sendToAll"
+      - "WebPubSubContentType"
+    tags:
+      - messaging
+      - basic
+    mock_response: |
+      import com.azure.messaging.webpubsub.WebPubSubServiceClient;
+      import com.azure.messaging.webpubsub.WebPubSubServiceClientBuilder;
+      import com.azure.messaging.webpubsub.models.WebPubSubContentType;
+
+      public class SendToAll {
+          public static void main(String[] args) {
+              String connectionString = System.getenv("WEB_PUBSUB_CONNECTION_STRING");
+              
+              WebPubSubServiceClient client = new WebPubSubServiceClientBuilder()
+                  .connectionString(connectionString)
+                  .hub("notifications")
+                  .buildClient();
+              
+              // Send text message
+              client.sendToAll("Hello everyone!", WebPubSubContentType.TEXT_PLAIN);
+              
+              // Send JSON message
+              String jsonMessage = "{\"type\": \"notification\", \"message\": \"New update!\"}";
+              client.sendToAll(jsonMessage, WebPubSubContentType.APPLICATION_JSON);
+              
+              System.out.println("Messages sent to all clients");
+          }
+      }
+
+  - name: group_management
+    prompt: |
+      Create a Java example that demonstrates group management:
+      adding users and connections to groups, sending to groups.
+    expected_patterns:
+      - "addConnectionToGroup"
+      - "addUserToGroup"
+      - "sendToGroup"
+      - "removeConnectionFromGroup"
+    tags:
+      - groups
+    mock_response: |
+      import com.azure.messaging.webpubsub.WebPubSubServiceClient;
+      import com.azure.messaging.webpubsub.WebPubSubServiceClientBuilder;
+      import com.azure.messaging.webpubsub.models.WebPubSubContentType;
+
+      public class GroupManagement {
+          public static void main(String[] args) {
+              String connectionString = System.getenv("WEB_PUBSUB_CONNECTION_STRING");
+              
+              WebPubSubServiceClient client = new WebPubSubServiceClientBuilder()
+                  .connectionString(connectionString)
+                  .hub("chat")
+                  .buildClient();
+              
+              String connectionId = "connection-123";
+              String userId = "user-456";
+              
+              // Add connection to group
+              client.addConnectionToGroup("premium-users", connectionId);
+              
+              // Add user to group (all their connections)
+              client.addUserToGroup("admin-group", userId);
+              
+              // Send to group
+              client.sendToGroup("premium-users", "Welcome premium users!", WebPubSubContentType.TEXT_PLAIN);
+              
+              // Remove connection from group
+              client.removeConnectionFromGroup("premium-users", connectionId);
+              
+              System.out.println("Group operations completed");
+          }
+      }
+
+  - name: client_access_token
+    prompt: |
+      Create a Java example that generates a client access token
+      with user ID, roles, and groups for WebSocket connections.
+    expected_patterns:
+      - "getClientAccessToken"
+      - "GetClientAccessTokenOptions"
+      - "setUserId"
+      - "addRole"
+      - "addGroup"
+      - "getUrl"
+    tags:
+      - authentication
+      - tokens
+    mock_response: |
+      import com.azure.messaging.webpubsub.WebPubSubServiceClient;
+      import com.azure.messaging.webpubsub.WebPubSubServiceClientBuilder;
+      import com.azure.messaging.webpubsub.models.GetClientAccessTokenOptions;
+      import com.azure.messaging.webpubsub.models.WebPubSubClientAccessToken;
+
+      public class GenerateToken {
+          public static void main(String[] args) {
+              String connectionString = System.getenv("WEB_PUBSUB_CONNECTION_STRING");
+              
+              WebPubSubServiceClient client = new WebPubSubServiceClientBuilder()
+                  .connectionString(connectionString)
+                  .hub("chat")
+                  .buildClient();
+              
+              WebPubSubClientAccessToken token = client.getClientAccessToken(
+                  new GetClientAccessTokenOptions()
+                      .setUserId("user123")
+                      .addRole("webpubsub.joinLeaveGroup")
+                      .addRole("webpubsub.sendToGroup")
+                      .addGroup("announcements")
+                      .addGroup("updates"));
+              
+              System.out.println("WebSocket URL: " + token.getUrl());
+              System.out.println("Token: " + token.getToken());
+          }
+      }

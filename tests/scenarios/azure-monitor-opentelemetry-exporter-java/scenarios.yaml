@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=https://json.schemastore.org/any.json
+# Test scenarios for azure-monitor-opentelemetry-exporter-java skill evaluation
+# NOTE: This SDK is deprecated - use azure-monitor-opentelemetry-autoconfigure instead
+
+config:
+  model: gpt-4
+  max_tokens: 2000
+  temperature: 0.3
+
+scenarios:
+  - name: setup_autoconfigure
+    prompt: |
+      Create Java code to set up Azure Monitor OpenTelemetry using
+      the autoconfigure package (recommended approach).
+    expected_patterns:
+      - "AutoConfiguredOpenTelemetrySdk"
+      - "AzureMonitorExporter"
+      - "customize"
+      - "getOpenTelemetrySdk"
+    tags:
+      - setup
+      - recommended
+    mock_response: |
+      import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+      import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
+      import io.opentelemetry.api.OpenTelemetry;
+      import com.azure.monitor.opentelemetry.exporter.AzureMonitorExporter;
+
+      public class SetupAutoconfigure {
+          public static void main(String[] args) {
+              // Connection string from APPLICATIONINSIGHTS_CONNECTION_STRING env var
+              AutoConfiguredOpenTelemetrySdkBuilder sdkBuilder = AutoConfiguredOpenTelemetrySdk.builder();
+              AzureMonitorExporter.customize(sdkBuilder);
+              OpenTelemetry openTelemetry = sdkBuilder.build().getOpenTelemetrySdk();
+              
+              System.out.println("OpenTelemetry configured with Azure Monitor");
+          }
+      }
+
+  - name: create_spans
+    prompt: |
+      Create a Java example that creates spans for distributed tracing
+      with attributes using OpenTelemetry.
+    expected_patterns:
+      - "Tracer"
+      - "spanBuilder"
+      - "startSpan"
+      - "makeCurrent"
+      - "Scope"
+      - "end()"
+      - "setAttribute"
+    tags:
+      - tracing
+      - spans
+    mock_response: |
+      import io.opentelemetry.api.OpenTelemetry;
+      import io.opentelemetry.api.trace.Tracer;
+      import io.opentelemetry.api.trace.Span;
+      import io.opentelemetry.context.Scope;
+      import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+      import com.azure.monitor.opentelemetry.exporter.AzureMonitorExporter;
+
+      public class CreateSpans {
+          public static void main(String[] args) {
+              var sdkBuilder = AutoConfiguredOpenTelemetrySdk.builder();
+              AzureMonitorExporter.customize(sdkBuilder);
+              OpenTelemetry openTelemetry = sdkBuilder.build().getOpenTelemetrySdk();
+              
+              Tracer tracer = openTelemetry.getTracer("com.example.myapp");
+              
+              Span span = tracer.spanBuilder("processOrder")
+                  .setAttribute("order.id", "12345")
+                  .setAttribute("customer.tier", "premium")
+                  .startSpan();
+              
+              try (Scope scope = span.makeCurrent()) {
+                  span.setAttribute("items.count", 3);
+                  processOrder();
+              } catch (Throwable t) {
+                  span.recordException(t);
+                  throw t;
+              } finally {
+                  span.end();
+              }
+          }
+          
+          private static void processOrder() {
+              // Business logic
+          }
+      }
+
+  - name: record_exceptions
+    prompt: |
+      Create a Java example that demonstrates proper exception
+      recording on spans with status codes.
+    expected_patterns:
+      - "recordException"
+      - "setStatus"
+      - "StatusCode.ERROR"
+      - "try"
+      - "catch"
+      - "finally"
+    tags:
+      - error-handling
+      - tracing
+    mock_response: |
+      import io.opentelemetry.api.OpenTelemetry;
+      import io.opentelemetry.api.trace.Tracer;
+      import io.opentelemetry.api.trace.Span;
+      import io.opentelemetry.api.trace.StatusCode;
+      import io.opentelemetry.context.Scope;
+
+      public class RecordExceptions {
+          private final Tracer tracer;
+          
+          public RecordExceptions(OpenTelemetry openTelemetry) {
+              this.tracer = openTelemetry.getTracer("com.example.myapp");
+          }
+          
+          public void riskyOperation() throws Exception {
+              Span span = tracer.spanBuilder("riskyOperation").startSpan();
+              try (Scope scope = span.makeCurrent()) {
+                  performRiskyWork();
+              } catch (Exception e) {
+                  span.recordException(e);
+                  span.setStatus(StatusCode.ERROR, e.getMessage());
+                  throw e;
+              } finally {
+                  span.end();
+              }
+          }
+          
+          private void performRiskyWork() throws Exception {
+              // Implementation
+          }
+      }

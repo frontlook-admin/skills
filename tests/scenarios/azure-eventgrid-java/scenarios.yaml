@@ -1,0 +1,184 @@
+# yaml-language-server: $schema=https://json.schemastore.org/any.json
+# Test scenarios for azure-eventgrid-java skill evaluation
+
+config:
+  model: gpt-4
+  max_tokens: 2000
+  temperature: 0.3
+
+scenarios:
+  - name: client_creation
+    prompt: |
+      Create Java code to set up the Azure Event Grid publisher client
+      for EventGridEvent schema using API key authentication.
+    expected_patterns:
+      - "EventGridPublisherClientBuilder"
+      - "AzureKeyCredential"
+      - "buildEventGridEventPublisherClient"
+      - 'System\.getenv\('
+    forbidden_patterns:
+      - 'endpoint\("https://'
+      - 'AzureKeyCredential\("'
+    tags:
+      - basic
+      - authentication
+    mock_response: |
+      import com.azure.messaging.eventgrid.EventGridPublisherClient;
+      import com.azure.messaging.eventgrid.EventGridPublisherClientBuilder;
+      import com.azure.messaging.eventgrid.EventGridEvent;
+      import com.azure.core.credential.AzureKeyCredential;
+
+      public class ClientSetup {
+          public static void main(String[] args) {
+              String endpoint = System.getenv("EVENT_GRID_TOPIC_ENDPOINT");
+              String key = System.getenv("EVENT_GRID_ACCESS_KEY");
+              
+              EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
+                  .endpoint(endpoint)
+                  .credential(new AzureKeyCredential(key))
+                  .buildEventGridEventPublisherClient();
+              
+              System.out.println("Client initialized successfully");
+          }
+      }
+
+  - name: publish_eventgrid_event
+    prompt: |
+      Create a Java example that publishes an EventGridEvent with
+      custom event data to an Event Grid topic.
+    expected_patterns:
+      - "EventGridEvent"
+      - "BinaryData.fromObject"
+      - "sendEvent"
+    tags:
+      - publish
+      - basic
+    mock_response: |
+      import com.azure.messaging.eventgrid.EventGridPublisherClient;
+      import com.azure.messaging.eventgrid.EventGridPublisherClientBuilder;
+      import com.azure.messaging.eventgrid.EventGridEvent;
+      import com.azure.core.credential.AzureKeyCredential;
+      import com.azure.core.util.BinaryData;
+
+      public class PublishEvent {
+          public static void main(String[] args) {
+              String endpoint = System.getenv("EVENT_GRID_TOPIC_ENDPOINT");
+              String key = System.getenv("EVENT_GRID_ACCESS_KEY");
+              
+              EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
+                  .endpoint(endpoint)
+                  .credential(new AzureKeyCredential(key))
+                  .buildEventGridEventPublisherClient();
+              
+              EventGridEvent event = new EventGridEvent(
+                  "orders/12345",
+                  "MyApp.Events.OrderCreated",
+                  BinaryData.fromObject(new OrderData("order-123", 99.99)),
+                  "1.0"
+              );
+              
+              client.sendEvent(event);
+              System.out.println("Event published successfully");
+          }
+          
+          static class OrderData {
+              private String orderId;
+              private double amount;
+              
+              public OrderData(String orderId, double amount) {
+                  this.orderId = orderId;
+                  this.amount = amount;
+              }
+          }
+      }
+
+  - name: publish_cloud_event
+    prompt: |
+      Create a Java example that publishes a CloudEvent to an
+      Event Grid topic using the CloudEvent schema.
+    expected_patterns:
+      - "CloudEvent"
+      - "CloudEventDataFormat"
+      - "buildCloudEventPublisherClient"
+      - "sendEvent"
+    tags:
+      - publish
+      - cloudevent
+    mock_response: |
+      import com.azure.messaging.eventgrid.EventGridPublisherClient;
+      import com.azure.messaging.eventgrid.EventGridPublisherClientBuilder;
+      import com.azure.core.models.CloudEvent;
+      import com.azure.core.models.CloudEventDataFormat;
+      import com.azure.core.credential.AzureKeyCredential;
+      import com.azure.core.util.BinaryData;
+      import java.util.UUID;
+
+      public class PublishCloudEvent {
+          public static void main(String[] args) {
+              String endpoint = System.getenv("EVENT_GRID_TOPIC_ENDPOINT");
+              String key = System.getenv("EVENT_GRID_ACCESS_KEY");
+              
+              EventGridPublisherClient<CloudEvent> client = new EventGridPublisherClientBuilder()
+                  .endpoint(endpoint)
+                  .credential(new AzureKeyCredential(key))
+                  .buildCloudEventPublisherClient();
+              
+              CloudEvent cloudEvent = new CloudEvent(
+                  "/myapp/orders",
+                  "order.created",
+                  BinaryData.fromString("{\"orderId\": \"12345\"}"),
+                  CloudEventDataFormat.JSON
+              );
+              cloudEvent.setSubject("orders/12345");
+              cloudEvent.setId(UUID.randomUUID().toString());
+              
+              client.sendEvent(cloudEvent);
+              System.out.println("CloudEvent published successfully");
+          }
+      }
+
+  - name: parse_events
+    prompt: |
+      Create a Java example that parses EventGridEvent and CloudEvent
+      from JSON payloads (as received in webhooks).
+    expected_patterns:
+      - "EventGridEvent.fromString"
+      - "CloudEvent.fromString"
+      - "getData"
+      - "toObject"
+    tags:
+      - parsing
+    mock_response: |
+      import com.azure.messaging.eventgrid.EventGridEvent;
+      import com.azure.core.models.CloudEvent;
+      import java.util.List;
+
+      public class ParseEvents {
+          public static void main(String[] args) {
+              // Parse EventGridEvent
+              String eventGridJson = "[{\"id\": \"123\", \"eventType\": \"Order.Created\", \"subject\": \"orders/1\", \"dataVersion\": \"1.0\", \"data\": {\"orderId\": \"123\"}}]";
+              List<EventGridEvent> eventGridEvents = EventGridEvent.fromString(eventGridJson);
+              
+              for (EventGridEvent event : eventGridEvents) {
+                  System.out.println("Event Type: " + event.getEventType());
+                  System.out.println("Subject: " + event.getSubject());
+                  OrderData data = event.getData().toObject(OrderData.class);
+                  System.out.println("Order ID: " + data.getOrderId());
+              }
+              
+              // Parse CloudEvent
+              String cloudEventJson = "[{\"specversion\": \"1.0\", \"type\": \"order.created\", \"source\": \"/orders\", \"id\": \"456\", \"data\": {\"orderId\": \"456\"}}]";
+              List<CloudEvent> cloudEvents = CloudEvent.fromString(cloudEventJson);
+              
+              for (CloudEvent event : cloudEvents) {
+                  System.out.println("Type: " + event.getType());
+                  OrderData data = event.getData().toObject(OrderData.class);
+                  System.out.println("Order ID: " + data.getOrderId());
+              }
+          }
+          
+          static class OrderData {
+              private String orderId;
+              public String getOrderId() { return orderId; }
+          }
+      }
