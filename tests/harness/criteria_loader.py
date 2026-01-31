@@ -157,7 +157,6 @@ class AcceptanceCriteriaLoader:
         criteria = AcceptanceCriteria(
             skill_name=skill_name,
             source_path=path,
-            language=language,
         )
 
         # Extract all code blocks with context

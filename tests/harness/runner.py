@@ -83,18 +83,32 @@ class SkillEvaluationRunner:
     5. Report results
     """
 
-    SCENARIOS_DIR = Path("tests/scenarios")
+    SCENARIOS_DIR = Path("scenarios")
 
     def __init__(
         self, base_path: Path | None = None, use_mock: bool = False, verbose: bool = False
     ):
-        self.base_path = base_path or Path.cwd()
-        self.scenarios_dir = self.base_path / self.SCENARIOS_DIR
+        self.base_path = base_path or self._find_repo_root()
+        # Scenarios are in tests/scenarios relative to repo root
+        self.scenarios_dir = self.base_path / "tests" / self.SCENARIOS_DIR
         self._use_mock = use_mock
         self._verbose = verbose
 
         self.criteria_loader = AcceptanceCriteriaLoader(self.base_path)
         self.copilot_client = SkillCopilotClient(self.base_path, use_mock=use_mock)
+
+    @staticmethod
+    def _find_repo_root() -> Path:
+        """Find the repository root by looking for .github/skills directory."""
+        cwd = Path.cwd()
+        # Check if we're in the tests directory
+        if (cwd.parent / ".github" / "skills").exists():
+            return cwd.parent
+        # Check if we're at the repo root
+        if (cwd / ".github" / "skills").exists():
+            return cwd
+        # Fallback to cwd
+        return cwd
 
     def list_available_skills(self) -> list[str]:
         """List skills that have both criteria and scenarios."""

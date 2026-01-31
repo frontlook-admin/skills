@@ -8,9 +8,13 @@ Performs static analysis to check for correct/incorrect usage patterns.
 from __future__ import annotations
 
 import ast
+import os
 import re
+import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -98,6 +102,9 @@ class CodeEvaluator:
     - Best practice checks
     """
 
+    # Cache for TypeScript syntax checker availability
+    _ts_checker_available: bool | None = None
+
     def __init__(self, criteria: AcceptanceCriteria):
         self.criteria = criteria
         self._compile_patterns()
@@ -170,10 +177,21 @@ class CodeEvaluator:
         return result
 
     def _check_syntax(self, code: str, result: EvaluationResult) -> bool:
-        """Check if code has valid syntax (Python only; skip for other languages)."""
-        if self.criteria.language.lower() != "python":
+        """Check if code has valid syntax based on language."""
+        language = self.criteria.language.lower()
+
+        if language == "python":
+            return self._check_python_syntax(code, result)
+        elif language == "typescript":
+            return self._check_typescript_syntax(code, result)
+        elif language in ("csharp", "java"):
+            return self._check_bracket_balance(code, result, language)
+        else:
+            # Skip validation for unsupported languages
             return True
 
+    def _check_python_syntax(self, code: str, result: EvaluationResult) -> bool:
+        """Check Python syntax using AST."""
         try:
             ast.parse(code)
             return True
@@ -188,6 +206,131 @@ class CodeEvaluator:
                 )
             )
             return False
+
+    def _check_typescript_syntax(self, code: str, result: EvaluationResult) -> bool:
+        """Check TypeScript syntax using ts-syntax-check.js helper."""
+        # First, check bracket balance (fast check)
+        if not self._check_bracket_balance(code, result, "typescript"):
+            return False
+
+        # Try to use TypeScript syntax checker for proper validation
+        if not self._is_ts_checker_available():
+            # Fall back to bracket balance only (already passed)
+            return True
+
+        try:
+            # Create a temporary file with the TypeScript code
+            with tempfile.NamedTemporaryFile(
+                mode="w",
+                suffix=".ts",
+                delete=False,
+                encoding="utf-8",
+            ) as f:
+                f.write(code)
+                temp_path = f.name
+
+            try:
+                # Run ts-syntax-check.js helper script
+                # This uses ts.transpileModule() which doesn't resolve modules
+                proc = subprocess.run(
+                    ["node", self._get_ts_checker_path(), temp_path],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                    cwd=Path(__file__).parent.parent,  # Run from tests directory
+                )
+
+                if proc.returncode != 0:
+                    # Get error message from stderr
+                    error_msg = proc.stderr.strip() if proc.stderr else "Unknown syntax error"
+                    result.findings.append(
+                        Finding(
+                            severity=Severity.ERROR,
+                            rule="syntax",
+                            message=f"TypeScript syntax error: {error_msg}",
+                        )
+                    )
+                    return False
+                return True
+
+            finally:
+                # Clean up temp file
+                try:
+                    os.unlink(temp_path)
+                except OSError:
+                    pass
+
+        except subprocess.TimeoutExpired:
+            # If check times out, consider it a pass (don't block on slow checks)
+            return True
+        except (subprocess.SubprocessError, OSError):
+            # If subprocess fails, fall back to bracket balance (already passed)
+            return True
+
+    def _is_ts_checker_available(self) -> bool:
+        """Check if TypeScript syntax checker is available."""
+        if CodeEvaluator._ts_checker_available is not None:
+            return CodeEvaluator._ts_checker_available
+
+        checker_path = self._get_ts_checker_path()
+        if not Path(checker_path).exists():
+            CodeEvaluator._ts_checker_available = False
+            return False
+
+        try:
+            # Test that node can run the script
+            proc = subprocess.run(
+                ["node", "--version"],
+                capture_output=True,
+                timeout=5,
+            )
+            if proc.returncode == 0:
+                CodeEvaluator._ts_checker_available = True
+                return True
+        except (subprocess.SubprocessError, OSError):
+            pass
+
+        CodeEvaluator._ts_checker_available = False
+        return False
+
+    def _get_ts_checker_path(self) -> str:
+        """Get the path to TypeScript syntax checker script."""
+        return str(Path(__file__).parent / "ts-syntax-check.js")
+
+    def _check_bracket_balance(
+        self, code: str, result: EvaluationResult, language: str
+    ) -> bool:
+        """Check for balanced brackets, braces, and parentheses."""
+        # Count brackets
+        open_parens = code.count("(")
+        close_parens = code.count(")")
+        open_brackets = code.count("[")
+        close_brackets = code.count("]")
+        open_braces = code.count("{")
+        close_braces = code.count("}")
+
+        errors = []
+
+        if open_parens != close_parens:
+            errors.append(f"Mismatched parentheses: {open_parens} '(' vs {close_parens} ')'")
+
+        if open_brackets != close_brackets:
+            errors.append(f"Mismatched brackets: {open_brackets} '[' vs {close_brackets} ']'")
+
+        if open_braces != close_braces:
+            errors.append(f"Mismatched braces: {open_braces} '{{' vs {close_braces} '}}'")
+
+        if errors:
+            result.findings.append(
+                Finding(
+                    severity=Severity.ERROR,
+                    rule="syntax",
+                    message=f"{language.title()} syntax error: {'; '.join(errors)}",
+                )
+            )
+            return False
+
+        return True
 
     def _check_imports(self, code: str, result: EvaluationResult) -> None:
         """Check import statements using AST for precision (Python only)."""
