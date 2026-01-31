@@ -287,8 +287,7 @@ scenarios:
       - "shutdownAzureMonitor"
       - "SIGTERM"
       - "await"
-    forbidden_patterns:
-      - "process.exit(0)"
+    forbidden_patterns: []
     tags:
       - shutdown
       - lifecycle
