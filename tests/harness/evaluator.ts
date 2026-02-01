@@ -297,6 +297,10 @@ export class CodeEvaluator {
   /**
    * Check import statements using regex matching.
    * Note: Without Python AST, we use regex-based matching.
+   * 
+   * IMPORTANT: Incorrect import patterns often involve COMBINATIONS of imports
+   * (e.g., sync client + async credential). We only flag as incorrect when
+   * ALL import lines in the pattern are present together.
    */
   private checkImports(code: string, result: EvaluationResult): void {
     const language = this.criteria.language.toLowerCase();
@@ -323,12 +327,14 @@ export class CodeEvaluator {
     }
 
     // Check incorrect import patterns from criteria
+    // Only flag as incorrect when ALL imports in the pattern are present
     for (const pattern of this.criteria.incorrectPatterns) {
       if (!pattern.code.toLowerCase().includes("import")) {
         continue;
       }
 
-      // Extract import statements from the pattern
+      // Extract all import statements from the pattern
+      const patternImports: string[] = [];
       for (const line of pattern.code.split("\n")) {
         const trimmedLine = line.trim();
         if (trimmedLine.startsWith("#") || !trimmedLine) {
@@ -340,21 +346,29 @@ export class CodeEvaluator {
         ) {
           continue;
         }
-
-        // Normalize and check for exact match
+        // Normalize whitespace
         const normalizedPattern = trimmedLine.split(/\s+/).join(" ");
-        for (const actualImport of actualImports) {
-          if (normalizedPattern === actualImport) {
-            result.findings.push(
-              createFinding({
-                severity: Severity.ERROR,
-                rule: "imports",
-                message: `Incorrect import: ${trimmedLine}`,
-                suggestion: `Check acceptance criteria section: ${pattern.section}`,
-              })
-            );
-          }
-        }
+        patternImports.push(normalizedPattern);
+      }
+
+      // Skip if no import lines found in pattern
+      if (patternImports.length === 0) {
+        continue;
+      }
+
+      // Check if ALL imports in the pattern are present in actual code
+      const allPresent = patternImports.every((pi) => actualImports.has(pi));
+      
+      if (allPresent) {
+        // All imports from the incorrect pattern are present together
+        result.findings.push(
+          createFinding({
+            severity: Severity.ERROR,
+            rule: "imports",
+            message: `Incorrect import combination: ${patternImports.join(", ")}`,
+            suggestion: `Check acceptance criteria section: ${pattern.section}`,
+          })
+        );
       }
     }
   }

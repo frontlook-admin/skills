@@ -7,12 +7,14 @@
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { execSync } from "node:child_process";
 import type {
   GenerationResult,
   GenerationConfig,
   CopilotClient,
 } from "./types.js";
 import { DEFAULT_GENERATION_CONFIG } from "./types.js";
+import { CopilotClient as SDKCopilotClient } from "@github/copilot-sdk";
 
 // =============================================================================
 // Mock Client
@@ -190,36 +192,44 @@ Generate only code. Follow the patterns from the skill documentation exactly.
     config: GenerationConfig
   ): Promise<GenerationResult> {
     const startTime = Date.now();
-
-    // Build full prompt
     const fullPrompt = this.buildPrompt(prompt, skillContext);
 
-    // Note: The real @github/copilot-sdk integration would go here
-    // See: https://github.com/github/copilot-sdk
-    // For now, we throw an error since the SDK isn't widely available
-    throw new Error(
-      "Real Copilot SDK integration not implemented. Use --mock flag."
-    );
+    const client = new SDKCopilotClient({
+      autoStart: true,
+      autoRestart: false,
+    });
 
-    // When SDK is available, the code would look something like:
-    // const client = new CopilotSDK.Client();
-    // const response = await client.complete({
-    //   prompt: fullPrompt,
-    //   model: config.model,
-    //   maxTokens: config.maxTokens,
-    //   temperature: config.temperature,
-    // });
-    //
-    // const code = this.extractCode(response.content);
-    // return {
-    //   code,
-    //   prompt: fullPrompt,
-    //   skillName,
-    //   model: config.model,
-    //   tokensUsed: response.usage?.totalTokens ?? 0,
-    //   durationMs: Date.now() - startTime,
-    //   rawResponse: response.content,
-    // };
+    let rawResponse = "";
+
+    try {
+      const session = await client.createSession({
+        model: config.model,
+      });
+
+      try {
+        const response = await session.sendAndWait(
+          { prompt: fullPrompt },
+          120000
+        );
+
+        rawResponse = response?.data?.content ?? "";
+        const code = this.extractCode(rawResponse);
+
+        return {
+          code,
+          prompt: fullPrompt,
+          skillName,
+          model: config.model,
+          tokensUsed: 0,
+          durationMs: Date.now() - startTime,
+          rawResponse,
+        };
+      } finally {
+        await session.destroy();
+      }
+    } finally {
+      await client.stop();
+    }
   }
 
   /**
@@ -288,15 +298,43 @@ Generate only code. Follow the patterns from the skill documentation exactly.
 // =============================================================================
 
 /**
- * Check if Copilot SDK is available.
- * Note: In the TypeScript version, we always default to mock mode
- * since the @github/copilot-sdk isn't widely available yet.
- * See: https://github.com/github/copilot-sdk
+ * Check if Copilot authentication is available.
+ *
+ * The SDK can authenticate in two ways:
+ * 1. Via `copilot` CLI (interactive login via `gh auth`)
+ * 2. Via PAT with "Copilot Requests" permission (GH_TOKEN or GITHUB_TOKEN env var)
+ *
+ * @returns true if either CLI is available OR PAT is set
  */
 export function checkCopilotAvailable(): boolean {
-  // For now, always return false to use mock mode
-  // When the SDK becomes available, we can add proper detection
-  return false;
+  // Check for PAT authentication first (preferred in CI)
+  if (checkCopilotToken()) {
+    return true;
+  }
+
+  // Fall back to CLI check
+  return checkCopilotCli();
+}
+
+/**
+ * Check if a Copilot-compatible token is available via environment variables.
+ * The Copilot CLI checks GH_TOKEN first, then GITHUB_TOKEN.
+ */
+export function checkCopilotToken(): boolean {
+  const token = process.env["GH_TOKEN"] || process.env["GITHUB_TOKEN"];
+  return !!token && token.length > 0;
+}
+
+/**
+ * Check if Copilot CLI is available in PATH.
+ */
+export function checkCopilotCli(): boolean {
+  try {
+    execSync("copilot --version", { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -304,7 +342,7 @@ export function checkCopilotAvailable(): boolean {
  */
 export function createClient(
   basePath?: string,
-  useMock: boolean = true
+  useMock: boolean = false
 ): SkillCopilotClient {
   return new SkillCopilotClient(basePath, useMock);
 }

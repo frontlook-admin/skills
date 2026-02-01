@@ -204,5 +204,42 @@ pnpm harness --list  # See all available skills
 | Issue | Solution |
 |-------|----------|
 | No skills found | Check `acceptance-criteria.md` exists in `references/` |
-| Copilot SDK unavailable | Use `--mock` flag |
+| Copilot SDK unavailable | Use `--mock` flag or set up PAT authentication (see below) |
 | Tests fail with real Copilot | Mock responses are hand-crafted; review criteria flexibility |
+
+## Real SDK Evaluation
+
+The harness supports two authentication methods for real Copilot SDK evaluation:
+
+### Local Development (Copilot CLI)
+
+1. Install Copilot CLI: `npm install -g @github/copilot`
+2. Run `copilot` and authenticate via `/login`
+3. Run without `--mock`: `pnpm harness azure-ai-agents-py --verbose`
+
+### CI/CD (PAT Authentication)
+
+For automated pipelines, use a Personal Access Token:
+
+1. Create a fine-grained PAT at https://github.com/settings/personal-access-tokens/new
+2. Add the **"Copilot Requests"** permission
+3. Set the token as environment variable `GH_TOKEN` or `GITHUB_TOKEN`
+
+```bash
+export GH_TOKEN="your-pat-with-copilot-requests-permission"
+pnpm harness azure-ai-agents-py --verbose
+```
+
+### GitHub Actions Workflows
+
+| Workflow | Trigger | Mode | Purpose |
+|----------|---------|------|---------|
+| `test-harness.yml` | PR, push to main | Mock | Fast, deterministic CI |
+| `skill-evaluation.yml` | Nightly, manual | Real SDK | Quality measurement |
+
+To enable real SDK evaluation in GitHub Actions:
+
+1. Create repository secret `COPILOT_TOKEN` with PAT (Copilot Requests permission)
+2. Set repository variable `ENABLE_REAL_EVAL=true`
+3. Trigger manually via Actions tab, or wait for nightly run
+
