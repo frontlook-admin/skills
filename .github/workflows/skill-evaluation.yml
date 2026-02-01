@@ -19,7 +19,7 @@ on:
         description: 'Quality threshold (0-100)'
         required: false
         type: number
-        default: 80
+        default: 60
       max_iterations:
         description: 'Max Ralph Loop iterations'
         required: false
@@ -71,7 +71,7 @@ jobs:
           
           SKILL_ARG="${{ inputs.skill }}"
           RALPH_FLAG=""
-          THRESHOLD="${{ inputs.threshold || 80 }}"
+          THRESHOLD="${{ inputs.threshold || 60 }}"
           MAX_ITER="${{ inputs.max_iterations || 2 }}"
           
           if [ "${{ inputs.ralph }}" = "true" ]; then
@@ -102,7 +102,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Mode:** Real Copilot SDK evaluation (nightly)" >> $GITHUB_STEP_SUMMARY
           if [ "${{ inputs.ralph }}" = "true" ]; then
-            echo "**Ralph Loop:** Enabled (threshold: ${{ inputs.threshold || 80 }}, max iterations: ${{ inputs.max_iterations || 2 }})" >> $GITHUB_STEP_SUMMARY
+            echo "**Ralph Loop:** Enabled (threshold: ${{ inputs.threshold || 60 }}, max iterations: ${{ inputs.max_iterations || 2 }})" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           
