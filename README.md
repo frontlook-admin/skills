@@ -1,6 +1,6 @@
 # Agent Skills
 
-[![Tests with Copilot SDK](https://github.com/microsoft/agent-skills/actions/workflows/test-harness.yml/badge.svg?branch=main)](https://github.com/github/copilot-sdk)
+[![Tests with Copilot SDK](https://github.com/microsoft/agent-skills/actions/workflows/test-harness.yml/badge.svg?branch=main)](https://github.com/microsoft/agent-skills/actions/workflows/test-harness.yml)
 [![Install via skills.sh](https://img.shields.io/badge/skills.sh-install-blue)](https://skills.sh/microsoft/agent-skills)
 [![Browse on Context7](https://img.shields.io/badge/Context7-browse%20skills-purple)](https://context7.com/microsoft/agent-skills?tab=skills)
 
@@ -46,6 +46,13 @@ npx ctx7 skills install /microsoft/agent-skills azure-ai-projects-py
 
 ---
 
+Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are powerful, but they lack domain knowledge about your SDKs. The patterns are already in their weights from pretraining. All you need is the right activation context to surface them.
+
+> [!IMPORTANT]
+> **Use skills selectively.** Loading all skills causes context rot: diluted attention, wasted tokens, conflated patterns. Only copy skills essential for your current project.
+
+---
+
 ![Context-Driven Development Architecture](https://raw.githubusercontent.com/microsoft/agent-skills/main/.github/assets/agent-skills-image.png)
 
 ---
@@ -59,13 +66,6 @@ npx ctx7 skills install /microsoft/agent-skills azure-ai-projects-py
 | **[AGENTS.md](AGENTS.md)** | Template for configuring agent behavior in your projects |
 | **[MCP Configs](#mcp-servers)** | Pre-configured servers for docs, GitHub, browser automation |
 | **[Live Docs](https://context7.com/microsoft/agent-skills)** | Context7-indexed Foundry documentation, updated daily |
-
----
-
-Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are powerful, but they lack domain knowledge about your SDKs. The patterns are already in their weights from pretraining. All you need is the right activation context to surface them.
-
-> [!IMPORTANT]
-> **Use skills selectively.** Loading all skills causes context rot: diluted attention, wasted tokens, conflated patterns. Only copy skills essential for your current project.
 
 ---
 
