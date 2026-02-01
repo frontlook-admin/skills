@@ -1,0 +1,29 @@
+# =============================================================================
+# Test Harness Output
+# =============================================================================
+
+# Generated code files (validation output)
+.generated/
+
+# Test results and reports
+results.md
+results.json
+*.report.md
+*.report.json
+
+# =============================================================================
+# Node.js
+# =============================================================================
+node_modules/
+*.tsbuildinfo
+
+# =============================================================================
+# Scratch/Example Files
+# =============================================================================
+# Don't commit standalone example Python files
+# (Test scenarios should be in scenarios/<skill>/scenarios.yaml)
+*.py
+!__init__.py
+
+# Fixtures generated during tests
+fixtures/

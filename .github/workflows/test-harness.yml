@@ -1,4 +1,7 @@
-name: Test Harness
+name: Test Harness (Mock Mode)
+
+# Fast, deterministic testing for PRs and pushes
+# For real SDK evaluation, see skill-evaluation.yml (scheduled/manual trigger)
 
 on:
   pull_request:

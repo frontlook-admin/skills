@@ -298,10 +298,37 @@ Generate only code. Follow the patterns from the skill documentation exactly.
 // =============================================================================
 
 /**
- * Check if Copilot CLI is available in PATH.
- * The SDK requires the `copilot` CLI to be installed and accessible.
+ * Check if Copilot authentication is available.
+ *
+ * The SDK can authenticate in two ways:
+ * 1. Via `copilot` CLI (interactive login via `gh auth`)
+ * 2. Via PAT with "Copilot Requests" permission (GH_TOKEN or GITHUB_TOKEN env var)
+ *
+ * @returns true if either CLI is available OR PAT is set
  */
 export function checkCopilotAvailable(): boolean {
+  // Check for PAT authentication first (preferred in CI)
+  if (checkCopilotToken()) {
+    return true;
+  }
+
+  // Fall back to CLI check
+  return checkCopilotCli();
+}
+
+/**
+ * Check if a Copilot-compatible token is available via environment variables.
+ * The Copilot CLI checks GH_TOKEN first, then GITHUB_TOKEN.
+ */
+export function checkCopilotToken(): boolean {
+  const token = process.env["GH_TOKEN"] || process.env["GITHUB_TOKEN"];
+  return !!token && token.length > 0;
+}
+
+/**
+ * Check if Copilot CLI is available in PATH.
+ */
+export function checkCopilotCli(): boolean {
   try {
     execSync("copilot --version", { stdio: "ignore" });
     return true;
