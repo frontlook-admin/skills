@@ -66,7 +66,7 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 | **[Custom Agents](#agents)** | Role-specific agents (backend, frontend, infrastructure, planner) |
 | **[AGENTS.md](AGENTS.md)** | Template for configuring agent behavior in your projects |
 | **[MCP Configs](#mcp-servers)** | Pre-configured servers for docs, GitHub, browser automation |
-| **[Live Docs](https://context7.com/microsoft/agent-skills)** | Context7-indexed Foundry documentation, updated daily |
+| **[Live Docs](https://context7.com/llmstxt/microsoft_github_io_agent-skills_llms-full_txt)** | Context7-indexed Foundry documentation, updated daily |
 
 ---
 
@@ -552,10 +552,10 @@ The **scaffold-foundry-app** prompt + **scaffolder** agent provide a complete pr
 
 ### Live Documentation
 
-[Context7](https://context7.com/microsoft/agent-skills) indexes this repo's Foundry documentation with semantic search. Updated daily via [GitHub workflow](.github/workflows/update-llms-txt.md):
+[Context7](https://context7.com/llmstxt/microsoft_github_io_agent-skills_llms-full_txt) indexes this repo's Foundry documentation with semantic search. Updated daily via [GitHub workflow](.github/workflows/update-llms-txt.md):
 
 1. Scrapes the latest [Azure AI Foundry TOC](https://learn.microsoft.com/en-us/azure/ai-foundry/) from Microsoft Learn
-2. Generates `llms.txt` (links + summaries) and `llms-full.txt` (full content)
+2. Generates `llms.txt` and `llms-full.txt`, hosted at [microsoft.github.io/agent-skills](https://microsoft.github.io/agent-skills/)
 3. Creates a PR if documentation has changed
 
 These files follow the [llms.txt specification](https://llmstxt.org/) for LLM-friendly documentation.
