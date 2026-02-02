@@ -81,7 +81,7 @@ AGENTS.md                # Agent configuration template
 ├── workflows/           # GitHub Actions (daily doc updates)
 └── copilot-instructions.md
 
-output/                  # Generated llms.txt files (daily workflow)
+docs/                    # Generated llms.txt files (daily workflow) - GitHub Pages hosted
 ├── llms.txt             # Links + summaries
 └── llms-full.txt        # Full content
 
