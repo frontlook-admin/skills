@@ -1,19 +1,19 @@
 ---
 name: azure-ai-evaluation-py
 description: |
-  Azure AI Foundry Evaluations for Python. Use for evaluating AI agents and models with built-in quality, safety, and agent evaluators.
+  Microsoft Foundry Evaluations for Python. Use for evaluating AI agents and models with built-in quality, safety, and agent evaluators.
   Triggers: "evaluate agent", "builtin.coherence", "openai_client.evals", "azure-ai-projects evaluations", "AI evaluation", "agent testing".
 package: azure-ai-projects
 ---
 
-# Azure AI Foundry Evaluations for Python
+# Microsoft Foundry Evaluations for Python
 
-Evaluate AI agents and models using Azure AI Foundry's cloud evaluation service with built-in evaluators, custom evaluators, and OpenAI graders.
+Evaluate AI agents and models using Microsoft Foundry's cloud evaluation service with built-in evaluators, custom evaluators, and OpenAI graders.
 
 ## When to Use This Skill
 
 Use this skill when users want to:
-- **Run evaluations** on AI agents or models in Azure AI Foundry
+- **Run evaluations** on AI agents or models in Microsoft Foundry
 - **Use built-in evaluators** like `builtin.coherence`, `builtin.violence`, `builtin.task_adherence`
 - **Create custom evaluators** (code-based or prompt-based)
 - **Compare evaluation runs** for regression testing
@@ -437,7 +437,7 @@ print(f"Init Params: {evaluator.definition.init_parameters}")
 2. **Use built-in evaluators** - Well-tested, maintained by Microsoft
 3. **Match data mapping to source type** - `{{item.*}}` for datasets, `{{sample.*}}` for agent responses
 4. **Include deployment_name** - Required for LLM-based evaluators
-5. **Check report_url** - View detailed results in Azure AI Foundry portal
+5. **Check report_url** - View detailed results in Microsoft Foundry portal
 
 ## Reference Files
 

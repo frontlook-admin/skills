@@ -1,6 +1,6 @@
 # Built-in Evaluators Reference
 
-Complete reference for Azure AI Foundry's built-in evaluators using the `azure-ai-projects` SDK.
+Complete reference for Microsoft Foundry's built-in evaluators using the `azure-ai-projects` SDK.
 
 ## Discovering Evaluators
 
