@@ -9,7 +9,7 @@ Skills, custom agents, AGENTS.md templates, and MCP configurations for AI coding
 
 > **Blog post:** [Context-Driven Development: Agent Skills for Microsoft Foundry and Azure](https://devblogs.microsoft.com/all-things-azure/context-driven-development-agent-skills-for-microsoft-foundry-and-azure/)
 
-> **🔍 Skill Explorer:** [Browse all 132 skills with 1-click install](https://microsoft.github.io/skills/)
+> **🔍 Skill Explorer:** [Browse all 130 skills with 1-click install](https://microsoft.github.io/skills/)
 
 ## Quick Start
 
@@ -74,15 +74,15 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 
 ## Skill Catalog
 
-> 132 skills in `.github/skills/` — flat structure with language suffixes for automatic discovery
+> 130 skills in `.github/skills/` — flat structure with language suffixes for automatic discovery
 
 | Language | Count | Suffix | 
 |----------|-------|--------|
 | [Core](#core) | 5 | — |
 | [Python](#python) | 41 | `-py` |
-| [.NET](#net) | 29 | `-dotnet` |
+| [.NET](#net) | 28 | `-dotnet` |
 | [TypeScript](#typescript) | 24 | `-ts` |
-| [Java](#java) | 26 | `-java` |
+| [Java](#java) | 25 | `-java` |
 | [Rust](#rust) | 7 | `-rust` |
 
 ---
@@ -114,7 +114,7 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 | [azure-ai-contentsafety-py](.github/skills/azure-ai-contentsafety-py/) | Content Safety SDK — detect harmful content in text/images with multi-severity classification. |
 | [azure-ai-contentunderstanding-py](.github/skills/azure-ai-contentunderstanding-py/) | Content Understanding SDK — multimodal extraction from documents, images, audio, video. |
 | [azure-ai-evaluation-py](.github/skills/azure-ai-evaluation-py/) | Evaluation SDK — quality, safety, and custom evaluators for generative AI apps. |
-| [hosted-agents-v2-py](.github/skills/hosted-agents-v2-py/) | Hosted Agents SDK — container-based agents with ImageBasedHostedAgentDefinition, custom images, tools. |
+| [agents-v2-py](.github/skills/agents-v2-py/) | Foundry Agents SDK — container-based agents with ImageBasedHostedAgentDefinition, custom images, tools. |
 | [azure-ai-projects-py](.github/skills/azure-ai-projects-py/) | High-level Foundry SDK — project client, versioned agents, evals, connections, OpenAI-compatible clients. |
 | [azure-search-documents-py](.github/skills/azure-search-documents-py/) | AI Search SDK — vector search, hybrid search, semantic ranking, indexing, skillsets. |
 
@@ -173,7 +173,7 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 </details>
 
 <details>
-<summary><strong>Identity & Security</strong> (2 skills)</summary>
+<summary><strong>Entra</strong> (2 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
@@ -225,11 +225,10 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 > 29 skills • suffix: `-dotnet`
 
 <details>
-<summary><strong>Foundry & AI</strong> (7 skills)</summary>
+<summary><strong>Foundry & AI</strong> (6 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
-| [azure-ai-agents-persistent-dotnet](.github/skills/azure-ai-agents-persistent-dotnet/) | Agents Persistent SDK — agent CRUD, threads, runs, streaming, function calling. |
 | [azure-ai-document-intelligence-dotnet](.github/skills/azure-ai-document-intelligence-dotnet/) | Document Intelligence — extract text, tables from invoices, receipts, IDs, forms. |
 | [azure-ai-openai-dotnet](.github/skills/azure-ai-openai-dotnet/) | Azure OpenAI — chat, embeddings, image generation, audio, assistants. |
 | [azure-ai-projects-dotnet](.github/skills/azure-ai-projects-dotnet/) | AI Projects SDK — Foundry project client, agents, connections, evals. |
@@ -274,7 +273,7 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 </details>
 
 <details>
-<summary><strong>Identity & Security</strong> (3 skills)</summary>
+<summary><strong>Entra</strong> (3 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
@@ -364,7 +363,7 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 </details>
 
 <details>
-<summary><strong>Identity, Security & Integration</strong> (4 skills)</summary>
+<summary><strong>Entra & Integration</strong> (4 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
@@ -394,11 +393,10 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 > 26 skills • suffix: `-java`
 
 <details>
-<summary><strong>Foundry & AI</strong> (8 skills)</summary>
+<summary><strong>Foundry & AI</strong> (7 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
-| [azure-ai-agents-persistent-java](.github/skills/azure-ai-agents-persistent-java/) | Agents Persistent — threads, messages, runs, streaming. |
 | [azure-ai-anomalydetector-java](.github/skills/azure-ai-anomalydetector-java/) | Anomaly Detector — univariate/multivariate time-series analysis. |
 | [azure-ai-contentsafety-java](.github/skills/azure-ai-contentsafety-java/) | Content Safety — text/image analysis, blocklist management. |
 | [azure-ai-formrecognizer-java](.github/skills/azure-ai-formrecognizer-java/) | Form Recognizer — extract text, tables, key-value pairs from documents. |
@@ -444,7 +442,7 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 </details>
 
 <details>
-<summary><strong>Identity & Security</strong> (3 skills)</summary>
+<summary><strong>Entra</strong> (3 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
@@ -474,11 +472,14 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 > 7 skills • suffix: `-rust`
 
 <details>
-<summary><strong>Identity</strong> (1 skill)</summary>
+<summary><strong>Entra</strong> (4 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
 | [azure-identity-rust](.github/skills/azure-identity-rust/) | Identity SDK — DeveloperToolsCredential, ManagedIdentityCredential, ClientSecretCredential. |
+| [azure-keyvault-certificates-rust](.github/skills/azure-keyvault-certificates-rust/) | Key Vault Certificates — create, import, manage certificates. |
+| [azure-keyvault-keys-rust](.github/skills/azure-keyvault-keys-rust/) | Key Vault Keys — RSA/EC keys, encrypt/decrypt, sign/verify. |
+| [azure-keyvault-secrets-rust](.github/skills/azure-keyvault-secrets-rust/) | Key Vault Secrets — passwords, API keys, connection strings. |
 
 </details>
 
@@ -498,17 +499,6 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 | Skill | Description |
 |-------|-------------|
 | [azure-eventhub-rust](.github/skills/azure-eventhub-rust/) | Event Hubs — high-throughput streaming, producers, consumers, batching. |
-
-</details>
-
-<details>
-<summary><strong>Security</strong> (3 skills)</summary>
-
-| Skill | Description |
-|-------|-------------|
-| [azure-keyvault-certificates-rust](.github/skills/azure-keyvault-certificates-rust/) | Key Vault Certificates — create, import, manage certificates. |
-| [azure-keyvault-keys-rust](.github/skills/azure-keyvault-keys-rust/) | Key Vault Keys — RSA/EC keys, encrypt/decrypt, sign/verify. |
-| [azure-keyvault-secrets-rust](.github/skills/azure-keyvault-secrets-rust/) | Key Vault Secrets — passwords, API keys, connection strings. |
 
 </details>
 
@@ -716,7 +706,7 @@ New skills must follow the full workflow to ensure quality and discoverability:
    ln -s ../../../.github/skills/azure-ai-projects-py projects
    ```
    
-   Categories: `foundry`, `data`, `messaging`, `monitoring`, `identity`, `security`, `integration`, `compute`, `container`
+   Categories: `foundry`, `data`, `messaging`, `monitoring`, `entra`, `integration`, `compute`, `m365`, `general`
 
 3. **Create acceptance criteria** in `.github/skills/<skill>/references/acceptance-criteria.md`
    - Document correct/incorrect import patterns
