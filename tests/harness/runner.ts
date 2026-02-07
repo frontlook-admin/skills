@@ -296,6 +296,7 @@ export class SkillEvaluationRunner {
       if (this.verbose) {
         const status = evalResult.passed ? chalk.green("✓") : chalk.red("✗");
         console.log(`    ${status} Score: ${evalResult.score.toFixed(1)}`);
+        this.printVerboseScenarioResult(evalResult, scenario);
       }
     }
 
@@ -372,6 +373,132 @@ export class SkillEvaluationRunner {
     return Math.max(0, Math.min(100, score));
   }
 
+  private getSeverityStyle(severity: Severity | string): (text: string) => string {
+    const severityValue = typeof severity === "string" ? severity : severity;
+    switch (severityValue) {
+      case "error":
+        return chalk.red;
+      case "warning":
+        return chalk.yellow;
+      case "info":
+        return chalk.blue;
+      default:
+        return chalk.white;
+    }
+  }
+
+  private printFinding(finding: Finding): void {
+    const severityStyle = this.getSeverityStyle(finding.severity);
+    const severityLabel = finding.severity.toUpperCase();
+
+    console.log(
+      `      ${severityStyle(`[${severityLabel}]`)} ${finding.rule}: ${finding.message}`
+    );
+
+    if (finding.suggestion) {
+      console.log(`        💡 ${finding.suggestion}`);
+    }
+
+    if (finding.codeSnippet) {
+      console.log(chalk.dim(`        ${finding.codeSnippet}`));
+    }
+  }
+
+  private printFindings(findings: Finding[]): void {
+    if (findings.length === 0) {
+      return;
+    }
+
+    console.log("    Findings:");
+    for (const finding of findings) {
+      this.printFinding(finding);
+    }
+  }
+
+  private printScenarioPatternChecks(code: string, scenario: TestScenario): void {
+    const expectedPatterns = scenario.expectedPatterns ?? [];
+    const forbiddenPatterns = scenario.forbiddenPatterns ?? [];
+
+    if (expectedPatterns.length === 0 && forbiddenPatterns.length === 0) {
+      return;
+    }
+
+    console.log("    Scenario checks:");
+
+    for (const pattern of expectedPatterns) {
+      const found = code.includes(pattern);
+      const status = found ? chalk.green("✓") : chalk.red("✗");
+      console.log(`      ${status} Expected: ${pattern}`);
+    }
+
+    for (const pattern of forbiddenPatterns) {
+      const found = code.includes(pattern);
+      const status = found ? chalk.red("✗") : chalk.green("✓");
+      console.log(`      ${status} Forbidden: ${pattern}`);
+    }
+  }
+
+  private printAcceptanceCriteriaMatches(
+    matchedCorrect: string[],
+    matchedIncorrect: string[]
+  ): void {
+    const uniqueCorrect = Array.from(new Set(matchedCorrect));
+    const uniqueIncorrect = Array.from(new Set(matchedIncorrect));
+
+    if (uniqueCorrect.length === 0 && uniqueIncorrect.length === 0) {
+      return;
+    }
+
+    console.log("    Acceptance criteria:");
+    if (uniqueCorrect.length > 0) {
+      console.log(
+        `      ${chalk.green("✓")} Matched sections: ${uniqueCorrect.join(", ")}`
+      );
+    }
+    if (uniqueIncorrect.length > 0) {
+      console.log(
+        `      ${chalk.red("✗")} Incorrect sections: ${uniqueIncorrect.join(", ")}`
+      );
+    }
+  }
+
+  private printVerboseScenarioResult(
+    result: EvaluationResult,
+    scenario: TestScenario
+  ): void {
+    this.printScenarioPatternChecks(result.generatedCode, scenario);
+    this.printAcceptanceCriteriaMatches(
+      result.matchedCorrect,
+      result.matchedIncorrect
+    );
+    this.printFindings(result.findings);
+  }
+
+  private printVerboseRalphResult(
+    result: RalphLoopResult,
+    scenario: TestScenario
+  ): void {
+    if (result.iterations.length === 0) {
+      return;
+    }
+
+    const scoreTrail = result.iterations
+      .map((iteration) => `#${iteration.iteration} ${iteration.score.toFixed(1)}`)
+      .join(" → ");
+
+    console.log(`    Iterations: ${scoreTrail}`);
+    console.log(
+      `    Improvement: ${result.improvement >= 0 ? "+" : ""}${result.improvement.toFixed(1)} pts`
+    );
+
+    const lastIteration = result.iterations[result.iterations.length - 1];
+    if (!lastIteration) {
+      return;
+    }
+    this.printScenarioPatternChecks(lastIteration.generatedCode, scenario);
+    this.printFindings(lastIteration.findings);
+  }
+
   async runWithLoop(
     skillName: string,
     scenarioFilter?: string,
@@ -427,6 +554,7 @@ export class SkillEvaluationRunner {
         console.log(
           `    ${status} Score: ${result.finalScore.toFixed(1)} (${result.iterations.length} iterations, ${result.stopReason})`
         );
+        this.printVerboseRalphResult(result, scenario);
       }
     }
 
@@ -562,20 +690,41 @@ function formatAllSkillsMarkdown(summary: AllSkillsSummary): string {
     lines.push("## Failed Scenarios");
     lines.push("");
     
-    for (const skill of failedSkills) {
-      lines.push(`### ${skill.skillName}`);
-      lines.push("");
-      for (const result of skill.results) {
-        if (!result.passed) {
-          lines.push(`- **${result.scenario}** (score: ${result.score.toFixed(1)})`);
-          const errors = result.findings.filter(f => f.severity === Severity.ERROR);
-          for (const err of errors.slice(0, 3)) { // Limit to 3 errors per scenario
-            lines.push(`  - ${err.message}`);
+      for (const skill of failedSkills) {
+        lines.push(`### ${skill.skillName}`);
+        lines.push("");
+        for (const result of skill.results) {
+          if (!result.passed) {
+            lines.push(`- **${result.scenario}** (score: ${result.score.toFixed(1)})`);
+            if (result.findings.length > 0) {
+              const errors = result.findings.filter(f => f.severity === Severity.ERROR);
+              const warnings = result.findings.filter(f => f.severity === Severity.WARNING);
+              const infos = result.findings.filter(f => f.severity === Severity.INFO);
+              const ordered = [...errors, ...warnings, ...infos].slice(0, 5);
+              for (const finding of ordered) {
+                const severity = finding.severity.toUpperCase();
+                lines.push(`  - [${severity}] ${finding.message}`);
+                if (finding.suggestion) {
+                  lines.push(`    - 💡 ${finding.suggestion}`);
+                }
+              }
+            }
+            if (result.matchedIncorrect.length > 0) {
+              lines.push("  - Incorrect sections:");
+              for (const section of result.matchedIncorrect) {
+                lines.push(`    - ${section}`);
+              }
+            }
+            if (result.matchedCorrect.length > 0) {
+              lines.push("  - Matched sections:");
+              for (const section of result.matchedCorrect) {
+                lines.push(`    - ${section}`);
+              }
+            }
           }
         }
+        lines.push("");
       }
-      lines.push("");
-    }
   }
   
   return lines.join("\n");
@@ -734,6 +883,23 @@ async function main(): Promise<number> {
           }
         } else {
           failedSkills++;
+          if (options.verbose) {
+            console.log(`  Failed scenarios: ${summary.failed}/${summary.totalScenarios}`);
+            for (const result of summary.results) {
+              if (!result.passed) {
+                console.log(`    - ${result.scenario} (score: ${result.score.toFixed(1)})`);
+                const errors = result.findings.filter(
+                  (finding) => finding.severity === Severity.ERROR
+                );
+                for (const error of errors.slice(0, 3)) {
+                  console.log(`        ${chalk.red("[ERROR]")} ${error.message}`);
+                  if (error.suggestion) {
+                    console.log(`          💡 ${error.suggestion}`);
+                  }
+                }
+              }
+            }
+          }
           if (!options.verbose) {
             console.log(chalk.red(`✗ ${summary.passed}/${summary.totalScenarios}`));
           }
