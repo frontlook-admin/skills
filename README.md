@@ -318,7 +318,7 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 > 24 skills • suffix: `-ts`
 
 <details>
-<summary><strong>Foundry & AI</strong> (7 skills)</summary>
+<summary><strong>Foundry & AI</strong> (6 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
@@ -328,7 +328,6 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 | [azure-ai-translation-ts](.github/skills/azure-ai-translation-ts/) | Translation — text translation, transliteration, document batch. |
 | [azure-ai-voicelive-ts](.github/skills/azure-ai-voicelive-ts/) | Voice Live — real-time voice AI with WebSocket, Node.js or browser. |
 | [azure-search-documents-ts](.github/skills/azure-search-documents-ts/) | AI Search — vector/hybrid search, semantic ranking, knowledge bases. |
-| [frontend-ui-dark-ts](.github/skills/frontend-ui-dark-ts/) | Frontend UI Dark — Vite + React + Tailwind + Framer Motion dark-themed UI design system. |
 
 </details>
 
@@ -378,12 +377,13 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 </details>
 
 <details>
-<summary><strong>Monitoring & Frontend</strong> (4 skills)</summary>
+<summary><strong>Monitoring & Frontend</strong> (5 skills)</summary>
 
 | Skill | Description |
 |-------|-------------|
 | [azure-microsoft-playwright-testing-ts](.github/skills/azure-microsoft-playwright-testing-ts/) | Playwright Testing — scale browser tests, CI/CD integration. |
 | [azure-monitor-opentelemetry-ts](.github/skills/azure-monitor-opentelemetry-ts/) | OpenTelemetry — tracing, metrics, logs with Application Insights. |
+| [frontend-ui-dark-ts](.github/skills/frontend-ui-dark-ts/) | Frontend UI Dark — Vite + React + Tailwind + Framer Motion dark-themed UI design system. |
 | [react-flow-node-ts](.github/skills/react-flow-node-ts/) | React Flow nodes — custom nodes with TypeScript, handles, Zustand. |
 | [zustand-store-ts](.github/skills/zustand-store-ts/) | Zustand stores — TypeScript, subscribeWithSelector, state/action separation. |
 
