@@ -12,7 +12,7 @@ Skills, custom agents, AGENTS.md templates, and MCP configurations for AI coding
 
 > **Blog post:** [Context-Driven Development: Agent Skills for Microsoft Foundry and Azure](https://devblogs.microsoft.com/all-things-azure/context-driven-development-agent-skills-for-microsoft-foundry-and-azure/)
 
-> **🔍 Skill Explorer:** [Browse all 130 skills with 1-click install](https://microsoft.github.io/skills/)
+> **🔍 Skill Explorer:** [Browse all 131 skills with 1-click install](https://microsoft.github.io/skills/)
 
 ## Quick Start
 
@@ -70,11 +70,11 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 
 ## Skill Catalog
 
-> 130 skills in `.github/skills/` — flat structure with language suffixes for automatic discovery
+> 131 skills in `.github/skills/` — flat structure with language suffixes for automatic discovery
 
 | Language | Count | Suffix | 
 |----------|-------|--------|
-| [Core](#core) | 5 | — |
+| [Core](#core) | 6 | — |
 | [Python](#python) | 41 | `-py` |
 | [.NET](#net) | 28 | `-dotnet` |
 | [TypeScript](#typescript) | 24 | `-ts` |
@@ -85,11 +85,12 @@ Coding agents like [Copilot CLI](https://github.com/features/copilot/cli) are po
 
 ### Core
 
-> 5 skills — tooling, infrastructure, language-agnostic
+> 6 skills — tooling, infrastructure, language-agnostic
 
 | Skill | Description |
 |-------|-------------|
 | [azd-deployment](.github/skills/azd-deployment/) | Deploy to Azure Container Apps with Azure Developer CLI (azd). Bicep infrastructure, remote builds, multi-service deployments. |
+| [copilot-sdk](.github/skills/copilot-sdk/) | Build applications powered by GitHub Copilot using the Copilot SDK. Session management, custom tools, streaming, hooks, MCP servers, BYOK. |
 | [github-issue-creator](.github/skills/github-issue-creator/) | Convert raw notes, error logs, or screenshots into structured GitHub issues. |
 | [mcp-builder](.github/skills/mcp-builder/) | Build MCP servers for LLM tool integration. Python (FastMCP), Node/TypeScript, or C#/.NET. |
 | [podcast-generation](.github/skills/podcast-generation/) | Generate podcast-style audio with Azure OpenAI Realtime API. Full-stack React + FastAPI + WebSocket. |
@@ -619,11 +620,11 @@ pnpm test
 
 ### Test Coverage Summary
 
-**125 skills with 1124 test scenarios** — all skills have acceptance criteria and test scenarios.
+**126 skills with 1135 test scenarios** — all skills have acceptance criteria and test scenarios.
 
 | Language | Skills | Scenarios | Top Skills by Scenarios |
 |----------|--------|-----------|-------------------------|
-| Core | 5 | 51 | `podcast-generation` (8), `skill-creator` (8) |
+| Core | 6 | 62 | `copilot-sdk` (11), `podcast-generation` (8), `skill-creator` (8) |
 | Python | 41 | 331 | `azure-ai-projects-py` (12), `pydantic-models-py` (12), `azure-ai-translation-text-py` (11) |
 | .NET | 29 | 290 | `azure-resource-manager-sql-dotnet` (14), `azure-resource-manager-redis-dotnet` (14), `azure-servicebus-dotnet` (13) |
 | TypeScript | 24 | 257 | `azure-storage-blob-ts` (17), `azure-servicebus-ts` (14), `azure-microsoft-playwright-testing-ts` (13) |
